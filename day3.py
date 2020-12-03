@@ -1,4 +1,4 @@
-import sys, argparse, re
+import sys, argparse, random
 
 def arg_parser():
     parser = argparse.ArgumentParser()
@@ -24,7 +24,7 @@ def oh_god_make_it_stop( i, j, l ):
     while position[1] < len( l ):
         dings += int( l[ position[1] ][0][ position[0] ] )
         position = [ (position[0] + i) % matrix_dim[0], position[1] + j ]
-    print(f'ouch! x {dings}')
+    print(f"{random.choice(['ouch!','fuck','noooooo'])} x {dings}")
     return dings
 
 def main( argv ):
