@@ -6,18 +6,18 @@ def arg_parser():
     return parser
 
 def parse_it(arg):
-    l = []
     with open( arg, 'r' ) as f:
-        for line in f:
-            line = line.strip('\n').translate(str.maketrans('FBLR','0101'))
-            l.append((int(line[0:7],2)*8 + int(line[7:],2)))
-    return l
-        
+            return [int(line.strip('\n').translate(str.maketrans('FBLR','0101')),2) for line in f]
+
 def main( argv ):
     arg = arg_parser().parse_args( argv[1:] )
+    with open(argv[1], 'r') as f:
+        for line in f:
+            if not re.fullmatch(r'((F|B){7})((L|R){3})',line.strip()):
+                print('issue with input!')
     ans = parse_it(argv[1])
     #part1:
-    print(max(ans))
+    print(f'max: {max(ans)}')
     #part2:
     for i in range(len(ans)-1):
         if sorted(ans)[i+1] - sorted(ans)[i] > 1:
