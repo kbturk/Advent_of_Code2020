@@ -14,8 +14,8 @@ def main(args):
                 for l in line.strip():
                     if l not in d[key]:
                         d[key].append(l)
-    print(key, sum([len(value) for value in d.values()]))
-    #part 2.
+    print(sum([len(value) for value in d.values()]))
+    #part 2. Could be merged into part one but I'm feeling lazy.
     with open(args[1],'r') as f:
         key = 0
         d = {}
@@ -27,21 +27,13 @@ def main(args):
                 key += 1
                 d[key] = []
             else:
-                l = [char for char in line.strip()]
+                l = sorted([char for char in line.strip()])
                 if a == 1:
                     d[key] = l
-                    #print(f'new row: {key}: {l}, a: {a}')
                 else:
-                    
-                    d2 = []
-                    for v in d[key]:
-                        if v in l:
-                            d2.append(v)
-                           # print(f"added '{v}'. list is now: {d2}, a:{a}")
-                    d[key] = d2
-                #print(d[key])
+                    d[key] = list(set(d[key]).intersection(set(l)))
             a +=1
-    #print(d)
+
     print(sum([len(value) for value in d.values()]))
 if __name__ == '__main__':
     sys.exit( main( sys.argv ) )
