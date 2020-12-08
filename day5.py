@@ -5,17 +5,16 @@ def arg_parser():
     parser.add_argument('input file', help ='please provide an input file containing a list of ints.', type=str)
     return parser
 
-def parse_it(arg):
-    with open( arg, 'r' ) as f:
-            return [int(line.strip('\n').translate(str.maketrans('FBLR','0101')),2) for line in f]
-
 def main( argv ):
     arg = arg_parser().parse_args( argv[1:] )
+    l = []
     with open(argv[1], 'r') as f:
         for line in f:
             if not re.fullmatch(r'((F|B){7})((L|R){3})',line.strip()):
                 print('issue with input!')
-    ans = parse_it(argv[1])
+                break
+            l.append(int(line.strip('\n').translate(str.maketrans('FBLR','0101')),2))
+
     #part1:
     print(f'max: {max(ans)}')
     #part2:
