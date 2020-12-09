@@ -33,7 +33,6 @@ def main(args):
     #part 2
     for i in range(len(l)):
         l_copy = copy.deepcopy(l)
-
         if l_copy[i][0] == 'jmp':
             l_copy[i][0] = 'nop'
 
