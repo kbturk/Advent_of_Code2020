@@ -3,8 +3,22 @@ from copy import deepcopy
 
 from typing import Dict, List, Optional, Set, Tuple
 
-def main(args: List[str]) -> int:
+def floating_bit_poss(floating_mask: int, value:int) -> Set[int]:
 
+    if floating_mask == 0:
+        return {value}
+
+    for i in range(36):
+        bit_pos = 35 - i
+
+        if floating_mask & (1 << bit_pos):
+            value_hi = value | (1 << bit_pos)
+            value_lo = value &~ (1 << bit_pos)
+            return (floating_bit_poss(floating_mask &~ (1 << bit_pos),value_hi) |
+             floating_bit_poss(floating_mask &~ (1 << bit_pos), value_lo))
+    raise Exception("Reached impossible state.")
+            
+def main(args: List[str]) -> int:
     registrar: Dict[int,int]= {}
 
     with open(args[1], 'r') as f:
@@ -15,22 +29,26 @@ def main(args: List[str]) -> int:
             print(mask_input_string)
 
             ones_mask = 0b000000000000000000000000000000000000
-            zeros_mask = 0b111111111111111111111111111111111111
-
+            #no more zero masks...
+            floating_mask = 0b000000000000000000000000000000000000
+            
             for i,c in enumerate(mask_input_string):
                 bit_pos = 35 - i
                 if c == '1':
-                    ones_mask = ones_mask | 1 << bit_pos
-                elif c == '0':
-                    zeros_mask = zeros_mask ^ 1 << bit_pos
+                    ones_mask |= ( 1 << bit_pos )
+                elif c == 'X':
+                    floating_mask |= ( 1 << bit_pos )
+
         elif "mem" in line:
             #convert the line into a list of locations and registrars
-
             added_commands = re.fullmatch( r'mem\[([0-9]+)\] = ([0-9]+)', line )
             key, value = int(added_commands.group(1)), int(added_commands.group(2))
-            value = value | ones_mask
-            value = value & zeros_mask
-            registrar[key] = value
+            addr = key | ones_mask
+            #now generate the remaining iterations:
+            for key in floating_bit_poss(floating_mask, addr):
+                registrar[key] = value
+            #value = value & zeros_mask
+            
 
     print(sum(registrar.values()))
 
