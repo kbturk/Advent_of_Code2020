@@ -38,31 +38,31 @@ def the_crew_would_have_quit(tile_string:str) -> Tuple[int,int,int]:
         #print(f'i:{i},coord:{coord}')
     return coord
 
-def black_surrounding_tiles(tile,black_tiles:List[Tuple[int,int,int]]) -> int:
+def black_surrounding_tiles(tile,black_tiles:Dict[Tuple[int,int,int],str]) -> int:
     count = 0
     for i in [(0,1,-1),(1,0,-1),(1,-1,0),(0,-1,1),(-1,0,1),(-1,1,0)]:
-        if (tile[0]+i[0],tile[1]+i[1],tile[2]+i[2]) in black_tiles:
+        if (tile[0]+i[0],tile[1]+i[1],tile[2]+i[2]) in black_tiles.keys():
             count += 1
     return count
 
 def main() -> int:
-    black_tiles: List[Tuple[int,int,int]] = []
+    black_tiles: Dict[Tuple[int,int,int],str] = {}
     current_tile = (0,0,0)
     #part 1:
     for line in sys.stdin:
         tile_flip = the_crew_would_have_quit(line.strip())
         if tile_flip in black_tiles:
-            black_tiles.remove(tile_flip)
+            del black_tiles[tile_flip]
         else:
-            black_tiles.append(tile_flip)
-    print(len(black_tiles))
+            black_tiles[tile_flip] = "black"
+    print(len(black_tiles.keys()))
     #part 2:
     tick = 0
     max_tick = 100
-    next_tick_black_tiles: List[Tuple[int,int,int]] = deepcopy(black_tiles)
+    next_tick_black_tiles: Dict[Tuple[int,int,int],str] = deepcopy(black_tiles)
 
     while tick < max_tick:
-        for tile in black_tiles:
+        for tile in black_tiles.keys():
             for i in [(0,1,-1),(1,0,-1),(1,-1,0),(0,-1,1),(-1,0,1),(-1,1,0),(0,0,0)]:
                 check_tile = (tile[0]+i[0],tile[1]+i[1],tile[2]+i[2])
                 black_tile_count = black_surrounding_tiles(check_tile,black_tiles)
@@ -71,11 +71,11 @@ def main() -> int:
                 if check_tile in black_tiles:
                     if (black_tile_count == 0) or (black_tile_count > 2):
                         if check_tile in next_tick_black_tiles:
-                            next_tick_black_tiles.remove(check_tile)
+                            del next_tick_black_tiles[check_tile]
                 else:
                     if black_tile_count == 2:
                         if check_tile not in next_tick_black_tiles:
-                            next_tick_black_tiles.append(check_tile)
+                            next_tick_black_tiles[check_tile] = "black"
         tick += 1
         black_tiles = deepcopy(next_tick_black_tiles)
         print(tick,len(next_tick_black_tiles))
